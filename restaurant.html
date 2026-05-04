@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Osteria Nera — Cucina Italiana</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --nero: #0a0805;
+  --carbone: #131109;
+  --grafite: #1e1b14;
+  --oro: #c8a96e;
+  --oro-chiaro: #e8d5a3;
+  --oro-scuro: #8a6d3b;
+  --crema: #f5efe4;
+  --bianco: #faf8f3;
+  --rosso: #8b1a1a;
+  --testo: #d4c9b0;
+  --testo-muted: #7a7060;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--nero);
+  color: var(--testo);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CURSOR */
+.cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  background: var(--oro);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.08s, width 0.25s, height 0.25s, background 0.25s;
+  mix-blend-mode: screen;
+}
+.cursor-ring {
+  position: fixed;
+  width: 36px; height: 36px;
+  border: 1px solid var(--oro);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+  transition: width 0.3s, height 0.3s, opacity 0.3s;
+}
+.cursor.hover { width: 18px; height: 18px; background: var(--oro-chiaro); }
+.cursor-ring.hover { width: 60px; height: 60px; opacity: 0.2; }
+
+/* GRAIN OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.5rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.4s, padding 0.4s;
+}
+nav.scrolled {
+  background: rgba(10,8,5,0.92);
+  backdrop-filter: blur(12px);
+  padding: 1rem 3rem;
+  border-bottom: 1px solid rgba(200,169,110,0.12);
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: var(--oro);
+  text-transform: uppercase;
+}
+.nav-logo span { font-style: italic; color: var(--oro-chiaro); }
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--testo-muted);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--oro); }
+.nav-reserva {
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--oro);
+  border: 1px solid var(--oro-scuro);
+  padding: 0.6rem 1.4rem;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.nav-reserva:hover { background: var(--oro); color: var(--nero); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(139,26,26,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(200,169,110,0.08) 0%, transparent 50%),
+    linear-gradient(180deg, var(--nero) 0%, var(--carbone) 50%, var(--nero) 100%);
+}
+
+.hero-img {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=80');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.12;
+  filter: sepia(40%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+}
+
+.hero-eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--oro);
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.3s forwards;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(4rem, 10vw, 9rem);
+  font-weight: 300;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: var(--crema);
+  margin-bottom: 0.3rem;
+  opacity: 0;
+  animation: fadeUp 1.2s 0.5s forwards;
+}
+
+.hero-title em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--oro);
+  display: block;
+}
+
+.hero-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--testo-muted);
+  letter-spacing: 0.06em;
+  margin: 1.5rem 0 3rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.9s forwards;
+}
+
+.hero-line {
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(to bottom, var(--oro), transparent);
+  margin: 0 auto 1.5rem;
+  opacity: 0;
+  animation: fadeUp 1s 1.1s forwards;
+}
+
+.hero-scroll {
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--testo-muted);
+  opacity: 0;
+  animation: fadeUp 1s 1.3s forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ORNAMENTO */
+.ornament {
+  text-align: center;
+  color: var(--oro-scuro);
+  font-size: 1.2rem;
+  letter-spacing: 0.4em;
+  margin: 2rem 0;
+  opacity: 0.6;
+}
+
+/* SECTIONS */
+section { position: relative; z-index: 2; }
+
+.section-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--oro);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  max-width: 60px;
+  height: 1px;
+  background: var(--oro-scuro);
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  font-weight: 300;
+  line-height: 1.1;
+  color: var(--crema);
+  margin-bottom: 1rem;
+}
+.section-title em { font-style: italic; color: var(--oro); }
+
+/* STORIA */
+.storia {
+  padding: 7rem 3rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+
+.storia-text p {
+  font-size: 0.95rem;
+  line-height: 1.9;
+  color: var(--testo-muted);
+  margin-bottom: 1.2rem;
+}
+
+.storia-img-wrap {
+  position: relative;
+}
+
+.storia-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  filter: sepia(20%) contrast(1.05);
+}
+
+.storia-img-frame {
+  position: absolute;
+  top: -1.5rem;
+  left: -1.5rem;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  border: 1px solid var(--oro-scuro);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.storia-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--oro);
+  line-height: 1.6;
+  margin: 1.5rem 0;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--oro-scuro);
+}
+
+/* MENU */
+.menu-section {
+  padding: 6rem 3rem;
+  background: var(--carbone);
+  position: relative;
+}
+
+.menu-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--oro-scuro), transparent);
+}
+
+.menu-section::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--oro-scuro), transparent);
+}
+
+.menu-header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 4rem;
+}
+
+/* TABS */
+.menu-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 4rem;
+  border-bottom: 1px solid rgba(200,169,110,0.15);
+}
+
+.tab-btn {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--testo-muted);
+  background: none;
+  border: none;
+  padding: 1rem 2.5rem;
+  cursor: none;
+  position: relative;
+  transition: color 0.3s;
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; right: 50%;
+  height: 1px;
+  background: var(--oro);
+  transition: left 0.3s, right 0.3s;
+}
+
+.tab-btn.active { color: var(--oro); }
+.tab-btn.active::after { left: 0; right: 0; }
+.tab-btn:hover { color: var(--crema); }
+
+/* MENU GRID */
+.menu-grid {
+  display: none;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: rgba(200,169,110,0.08);
+}
+.menu-grid.active { display: grid; }
+
+.dish-card {
+  background: var(--carbone);
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  cursor: none;
+  transition: background 0.3s;
+}
+
+.dish-card:hover { background: var(--grafite); }
+
+.dish-img-wrap {
+  position: relative;
+  overflow: hidden;
+  height: 220px;
+}
+
+.dish-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(15%) saturate(0.9);
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.4s;
+}
+
+.dish-card:hover .dish-img {
+  transform: scale(1.06);
+  filter: sepia(0%) saturate(1.1);
+}
+
+.dish-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,8,5,0.8) 0%, transparent 60%);
+}
+
+.dish-badge {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--oro-scuro);
+  color: var(--oro);
+  background: rgba(10,8,5,0.7);
+  backdrop-filter: blur(4px);
+}
+
+.dish-body { padding: 1.5rem; }
+
+.dish-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--crema);
+  margin-bottom: 0.3rem;
+}
+
+.dish-desc {
+  font-size: 0.75rem;
+  color: var(--testo-muted);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.dish-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dish-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  color: var(--oro);
+  font-weight: 300;
+}
+
+.dish-allergens {
+  font-size: 0.6rem;
+  color: var(--testo-muted);
+  letter-spacing: 0.1em;
+}
+
+/* VINI */
+.vini-section {
+  padding: 7rem 3rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.vini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-top: 3rem;
+}
+
+.vino-item {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid rgba(200,169,110,0.1);
+  transition: border-color 0.3s;
+}
+
+.vino-item:hover { border-color: rgba(200,169,110,0.3); }
+
+.vino-vintage {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--oro-scuro);
+  line-height: 1;
+  min-width: 70px;
+}
+
+.vino-info h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--crema);
+  margin-bottom: 0.25rem;
+}
+
+.vino-info p {
+  font-size: 0.72rem;
+  color: var(--testo-muted);
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+  line-height: 1.5;
+  margin-bottom: 0.4rem;
+}
+
+.vino-price {
+  font-size: 0.8rem;
+  color: var(--oro);
+  letter-spacing: 0.05em;
+}
+
+/* PRENOTAZIONE */
+.prenotazione {
+  padding: 7rem 3rem;
+  background: linear-gradient(135deg, var(--carbone) 0%, var(--grafite) 100%);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.prenotazione::before {
+  content: 'OSTERIA';
+  position: absolute;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20vw;
+  font-weight: 700;
+  color: rgba(200,169,110,0.03);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: 0.1em;
+}
+
+.prenotazione .section-label { justify-content: center; }
+.prenotazione .section-label::after { display: none; }
+
+.prenotazione-info {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  margin: 3rem 0;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  text-align: center;
+}
+
+.info-item .label {
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--testo-muted);
+  margin-bottom: 0.5rem;
+}
+
+.info-item .value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  color: var(--crema);
+}
+
+.btn-reserva {
+  display: inline-block;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--nero);
+  background: var(--oro);
+  padding: 1.2rem 3.5rem;
+  text-decoration: none;
+  transition: all 0.3s;
+  margin-top: 1rem;
+}
+
+.btn-reserva:hover {
+  background: var(--oro-chiaro);
+  letter-spacing: 0.28em;
+}
+
+/* FOOTER */
+footer {
+  padding: 3rem;
+  background: var(--nero);
+  border-top: 1px solid rgba(200,169,110,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  color: var(--oro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.footer-credits {
+  font-size: 0.6rem;
+  color: var(--testo-muted);
+  letter-spacing: 0.1em;
+}
+
+.footer-credits a {
+  color: var(--oro);
+  text-decoration: none;
+  border-bottom: 1px solid var(--oro-scuro);
+}
+
+/* REVEAL ANIMATIONS */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--nero); }
+::-webkit-scrollbar-thumb { background: var(--oro-scuro); }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  backdrop-filter: blur(6px);
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--grafite);
+  border: 1px solid var(--oro-scuro);
+  max-width: 500px;
+  width: 90%;
+  padding: 3rem;
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.3s;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+
+.modal-close {
+  position: absolute;
+  top: 1.2rem; right: 1.5rem;
+  font-size: 1.4rem;
+  color: var(--testo-muted);
+  background: none;
+  border: none;
+  cursor: none;
+  transition: color 0.2s;
+}
+.modal-close:hover { color: var(--oro); }
+
+.modal h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--crema);
+  margin-bottom: 0.5rem;
+}
+.modal .modal-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--testo-muted);
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+.modal img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  margin-bottom: 1.5rem;
+  filter: sepia(10%);
+}
+.modal p {
+  font-size: 0.82rem;
+  line-height: 1.8;
+  color: var(--testo-muted);
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+  margin-bottom: 1.5rem;
+}
+.modal-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  color: var(--oro);
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="ring"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">Osteria <span>Nera</span></div>
+  <ul class="nav-links">
+    <li><a href="#storia">Storia</a></li>
+    <li><a href="#menu">Menù</a></li>
+    <li><a href="#vini">Vini</a></li>
+    <li><a href="#prenotazione">Reservas</a></li>
+  </ul>
+  <a href="#prenotazione" class="nav-reserva">Reservar mesa</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-img"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Milano · Est. 2019 · Buenos Aires</p>
+    <h1 class="hero-title">
+      Osteria
+      <em>Nera</em>
+    </h1>
+    <p class="hero-subtitle">La tradición italiana, reinterpretada con alma porteña</p>
+    <div class="hero-line"></div>
+    <p class="hero-scroll">Scroll per scoprire</p>
+  </div>
+</section>
+
+<!-- STORIA -->
+<section class="storia" id="storia">
+  <div class="storia-text reveal">
+    <p class="section-label">La nostra storia</p>
+    <h2 class="section-title">Una cocina que<br><em>cuenta historia</em></h2>
+    <blockquote class="storia-quote">
+      "La buona cucina è arte, amore e memoria.<br>Ogni piatto racconta un viaggio."
+    </blockquote>
+    <p>Nacida del sueño de Matteo Ferrara, cocinero milanés que llegó a Buenos Aires en 2014 con una valija y las recetas de su nonna, Osteria Nera es hoy el rincón donde Italia y Argentina se abrazan.</p>
+    <p>Cada plato es elaborado con ingredientes de estación, pastas frescas hechas a mano cada mañana, y vinos cuidadosamente seleccionados de las mejores bodegas italianas y mendocinas.</p>
+  </div>
+  <div class="storia-img-wrap reveal" style="transition-delay: 0.2s">
+    <div class="storia-img-frame"></div>
+    <img class="storia-img" src="https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?w=800&q=80" alt="Chef en la cocina">
+  </div>
+</section>
+
+<!-- MENU -->
+<section class="menu-section" id="menu">
+  <div class="menu-header reveal">
+    <p class="section-label" style="justify-content:center">— Il Menù —</p>
+    <h2 class="section-title" style="text-align:center">Cucina <em>autentica</em></h2>
+    <p style="font-size:0.8rem; color:var(--testo-muted); font-style:italic; font-family:'Cormorant Garamond',serif; font-size:1rem; margin-top:0.5rem">Pasta fresca elaborada cada mañana · Ingredientes de estación</p>
+  </div>
+
+  <div class="menu-tabs">
+    <button class="tab-btn active" data-tab="antipasti">Antipasti</button>
+    <button class="tab-btn" data-tab="primi">Primi Piatti</button>
+    <button class="tab-btn" data-tab="secondi">Secondi</button>
+    <button class="tab-btn" data-tab="dolci">Dolci</button>
+  </div>
+
+  <!-- ANTIPASTI -->
+  <div class="menu-grid active" id="antipasti">
+    <div class="dish-card" onclick="openModal('bruschetta')">
+      <div class="dish-img-wrap">
+        <img class="dish-img" src="https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=600&q=80" alt="Bruschetta">
+        <div class="dish-img-overlay"></div>
+        <span class="dish-badge">Clásico</span>
+      </div>
+      <div class="dish-body">
+        <h3 class="dish-name">Bruschetta al Pomodoro</h3>
+        <p class="dish-desc">Pan de masa madre tostado, tomates cherry confitados, albahaca fresca, aceite de oliva extra virgen del Piamonte</p>
+        <div class="dish-footer">
+          <span class="dish-price">$1.800</span>
+          <span class="dish-allergens">🌾 gluten · 🫒 aceites</span>
+        </div>
+      </div>
+    </div>
+    <div class="dish-card" onclick="openModal('burrata')">
+      <div class="dish-img-wrap">
+        <img class="dish-img" src="https://images.unsplash.com/photo-1600803907087-f56d462fd26b?w=600&q=80" alt="Burrata">
+        <div class="dish-img-overlay"></div>
+        <span class="dish-badge">Chef recomienda</span>
+      </div>
+      <div class="dish-body">
+        <h3 class="dish-name">Burrata con Prosciutto</h3>
+        <p class="dish-desc">Burrata fresca importada, prosciutto di Parma 24 meses, rúcula silvestre, reducción de balsámico de Módena</p>
+        <div class="dish-footer">
+          <span class="dish-price">$2.900</span>
+          <span class="dish-allergens">🥛 lácteos · 🐷 cerdo</span>
+        </div>
+      </div>
+    </div>
+    <div class="dish-card" onclick="openModal('carpaccio')">
+      <div class="dish-img-wrap">
+        <img class="dish-img" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80" alt="Carpaccio">
+        <div class="dish-img-overlay"></div>
+      </div>
+      <div class="dish-body">
+        <h3 class="dish-name">Carpaccio di Manzo</h3>
+        <p class="dish-desc">Lomo de res madurado 21 días, láminas finísimas, alcaparras de Sicilia, parmesano reggiano, limón y rúcula</p>
+        <div class="dish-footer">
+          <span class="dish-price">$3.200</span>
+          <span class="dish-allergens">🥩 res · 🥛 lácteos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIMI -->
+  <div class="menu-grid" id="primi">
+    <div class="dish-card" onclick="openModal('cacio')">
+      <div class="dish-img-wrap">
+        <img class="dish-img" src="https://images.unsplash.com/photo-1612874742237-6526221588e3?w=600&q=80" alt="Cacio e Pepe">
+        <div class="dish-img-overlay"></div>
+        <span class="dish-badge">Nuestra firma</span>
+      </div>
+      <div class="dish-body">
+        <h3 class="dish-name">Cacio e Pepe</h3>
+        <p class="dish-desc">Tonnarelli artesanal, pecorino romano DOP, pimienta negra de Tellicherry, manteca clarificada. Simple. Perfecto.</p>
+        <div class="dish-footer">
+          <span class="dish-price">$3.400</span>
+          <span class="dish-allergens">🌾 gluten · 🥛 lácteos</span>
+        </div>
+      </div>
+    </div>
+    <div class="dish-card" onclick="openModal('carbonara')">
+      <div class="dish-img-wrap">
+        <img class="dish-img" src="https://images.unsplash.com/photo-1546549032-9571cd6b27df?w=600&q=80" alt="Carbonara">
+        <div class="dish-img-overlay"></div>
+        <span class="dish-badge">Top ventas</span>
+      </div>
+      <div class="dish-body">
+        <h3 class="dish-name">Rigatoni alla Carbonara</h3>
+        <p class="dish-desc">Rigatoni de sémola de trigo duro, guanciale de Amatrice, yemas de huevo de campo, pecorino y parmesano</p>
+        <div class="dish-footer">
+          <span class="dish-price">$3.600</span>
+          <span class="dish-allergens">🌾 gluten · 🥚 huevo · 🐷 cerdo</span>
+        </div>
+      </div>
+    </div>
+    <div class="dish-card" onclick="openModal('risotto')">
+      <div class="dish-img-wrap">
+        <img class="dish-img" src="https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=600&q=80" alt="Risotto">
+        <div class="dish-img-overlay"></div>
+        <span class="dish-badge">Estacional</span>
+      </div>
+      <div class="dish-body">
+        <h3 class="dish-name">Risotto ai Funghi Porcini</h3>
+        <p class="dish-desc">Arroz Carnaroli, hongos porcini secos importados y frescos de temporada, trufa negra rallada, parmesano 36 meses</p>
+        <div class="dish-footer">
+          <span class="dish-price">$4.100</span>
+          <span class="dish-allergens">🥛 lácteos · 🍄 hongos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECONDI -->
+  <div class="menu-grid" id="secondi">
+    <div class="dish-card" onclick="openModal('branzino')">
+      <div class="dish-img-wrap">
+        <img class="dish-img" src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80" alt="Branzino">
+        <div class="dish-img-overlay"></div>
+        <span class="dish-badge">Del mar</span>
+      </div>
+      <div class="dish-body">
+        <h3 class="dish-name">Branzino al Forno</h3>
+        <p class="dish-desc">Lubina entera al horno, hierbas de Liguria, limón de Amalfi, aceitunas taggiasche, tomates cherry y alcaparras</p>
+        <div class="dish-footer">
+          <span class="dish-price">$5.800</span>
+          <span class="dish-allergens">🐟 pescado · 🫒 aceitunas</span>
+        </div>
+      </div>
+    </div>
+    <div class="dish-card" onclick="openModal('ossobuco')">
+      <div class="dish-img-wrap">
+        <img class="dish-img" src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&q=80" alt="Ossobuco">
+        <div class="dish-img-overlay"></div>
+        <span class="dish-badge">Milano auténtico</span>
+      </div>
+      <div class="dish-body">
+        <h3 class="dish-name">Ossobuco alla Milanese</h3>
+        <p class="dish-desc">Jarrete de ternera estofado 4 horas, gremolata de limón y perejil, acompañado de risotto alla milanese con azafrán</p>
+        <div class="dish-footer">
+          <span class="dish-price">$6.200</span>
+          <span class="dish-allergens">🥩 ternera · 🌾 gluten</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOLCI -->
+  <div class="menu-grid" id="dolci">
+    <div class="dish-card" onclick="openModal('tiramisu')">
+      <div class="dish-img-wrap">
+        <img class="dish-img" src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=600&q=80" alt="Tiramisu">
+        <div class="dish-img-overlay"></div>
+        <span class="dish-badge">El original</span>
+      </div>
+      <div class="dish-body">
+        <h3 class="dish-name">Tiramisù della Nonna</h3>
+        <p class="dish-desc">Receta de la abuela de Matteo desde 1962. Mascarpone, savoiardi, espresso triple, Marsala DOC y cacao de Perú</p>
+        <div class="dish-footer">
+          <span class="dish-price">$1.600</span>
+          <span class="dish-allergens">🥚 huevo · 🥛 lácteos · 🌾 gluten</span>
+        </div>
+      </div>
+    </div>
+    <div class="dish-card" onclick="openModal('pannacotta')">
+      <div class="dish-img-wrap">
+        <img class="dish-img" src="https://images.unsplash.com/photo-1488477304112-4944851de03d?w=600&q=80" alt="Panna cotta">
+        <div class="dish-img-overlay"></div>
+      </div>
+      <div class="dish-body">
+        <h3 class="dish-name">Panna Cotta ai Frutti di Bosco</h3>
+        <p class="dish-desc">Crema cocida de vainilla de Madagascar, coulis de frutos rojos frescos, menta y polvo de almendra tostada</p>
+        <div class="dish-footer">
+          <span class="dish-price">$1.400</span>
+          <span class="dish-allergens">🥛 lácteos · 🌰 frutos secos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VINI -->
+<section class="vini-section" id="vini">
+  <div class="reveal">
+    <p class="section-label">La cantina</p>
+    <h2 class="section-title">Vini <em>selezionati</em></h2>
+    <p style="font-size:0.85rem; color:var(--testo-muted); font-family:'Cormorant Garamond',serif; font-style:italic; max-width:500px; line-height:1.7">Una selección de más de 80 etiquetas italianas y argentinas, elegidas personalmente por nuestro sommelier.</p>
+  </div>
+  <div class="vini-grid reveal" style="transition-delay:0.2s">
+    <div>
+      <div style="font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--oro); margin-bottom:1.5rem">Rossi — Tintos</div>
+      <div class="vino-item">
+        <div class="vino-vintage">21</div>
+        <div class="vino-info">
+          <h4>Barolo DOCG — Pio Cesare</h4>
+          <p>Nebbiolo. Notas de rosa seca, trufa, cuero y frutos rojos maduros. Piamonte, Italia.</p>
+          <span class="vino-price">Copa $2.400 · Botella $18.000</span>
+        </div>
+      </div>
+      <div class="vino-item">
+        <div class="vino-vintage">20</div>
+        <div class="vino-info">
+          <h4>Amarone della Valpolicella — Allegrini</h4>
+          <p>Corvina, Rondinella. Ciruela negra, chocolate amargo, especias. Veneto, Italia.</p>
+          <span class="vino-price">Copa $2.800 · Botella $22.000</span>
+        </div>
+      </div>
+      <div class="vino-item">
+        <div class="vino-vintage">22</div>
+        <div class="vino-info">
+          <h4>Malbec Gran Reserva — Achaval Ferrer</h4>
+          <p>Malbec 100%. Violetas, mora, tabaco suave. Luján de Cuyo, Mendoza.</p>
+          <span class="vino-price">Copa $1.600 · Botella $12.000</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--oro); margin-bottom:1.5rem">Bianchi — Blancos</div>
+      <div class="vino-item">
+        <div class="vino-vintage">23</div>
+        <div class="vino-info">
+          <h4>Pinot Grigio DOC — Santa Margherita</h4>
+          <p>Pinot Grigio. Manzana verde, cítricos, flores blancas. Trentino-Alto Adige.</p>
+          <span class="vino-price">Copa $1.800 · Botella $13.500</span>
+        </div>
+      </div>
+      <div class="vino-item">
+        <div class="vino-vintage">22</div>
+        <div class="vino-info">
+          <h4>Gavi di Gavi DOCG — La Scolca</h4>
+          <p>Cortese. Almendra, melocotón blanco, mineralidad elegante. Piamonte.</p>
+          <span class="vino-price">Copa $2.000 · Botella $15.000</span>
+        </div>
+      </div>
+      <div class="vino-item">
+        <div class="vino-vintage">NV</div>
+        <div class="vino-info">
+          <h4>Prosecco Superiore DOCG — Bisol</h4>
+          <p>Glera. Pera, manzana, brioche, burbujas finas. Valdobbiadene, Veneto.</p>
+          <span class="vino-price">Copa $1.400 · Botella $10.500</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRENOTAZIONE -->
+<section class="prenotazione" id="prenotazione">
+  <p class="section-label">Venite a trovarci</p>
+  <h2 class="section-title" style="color:var(--crema); margin-bottom:0.5rem">Reserve su<br><em>mesa</em></h2>
+  <div class="prenotazione-info reveal">
+    <div class="info-item">
+      <div class="label">Dirección</div>
+      <div class="value">Av. Alvear 1891, Recoleta</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Horario</div>
+      <div class="value">Mar–Dom · 12h a 15h · 20h a 00h</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Teléfono</div>
+      <div class="value">+54 11 4801-2345</div>
+    </div>
+  </div>
+  <a href="tel:+541148012345" class="btn-reserva reveal">Llamar para reservar</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Osteria Nera · Milano · Buenos Aires</div>
+  <div class="footer-credits">
+    Diseño & Desarrollo por <a href="#">Franco Pacheco</a> — Frontend Dev & Data Analyst
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalBtn()">×</button>
+    <img id="modal-img" src="" alt="">
+    <h3 id="modal-name"></h3>
+    <p class="modal-sub" id="modal-sub"></p>
+    <p id="modal-desc"></p>
+    <div class="modal-price" id="modal-price"></div>
+  </div>
+</div>
+
+<script>
+// CURSOR
+const cur = document.getElementById('cur');
+const ring = document.getElementById('ring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => {
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+});
+(function animRing(){
+  rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a,button,.dish-card,.tab-btn,.nav-reserva').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.classList.add('hover');ring.classList.add('hover');});
+  el.addEventListener('mouseleave',()=>{cur.classList.remove('hover');ring.classList.remove('hover');});
+});
+
+// NAV SCROLL
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY>80);
+});
+
+// TABS
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.menu-grid').forEach(g=>g.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// REVEAL
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.15});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// MODAL DATA
+const dishes = {
+  bruschetta:{name:'Bruschetta al Pomodoro',sub:'Antipasto · Clásico Romano',img:'https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=700&q=80',desc:'Nuestro pan de masa madre se hornea cada mañana. Los tomates cherry se confinan durante 2 horas con ajo, aceite de oliva extra virgen del Piamonte y albahaca fresca recién cortada. Un clásico intocable.',price:'$1.800'},
+  burrata:{name:'Burrata con Prosciutto',sub:'Antipasto · Chef recomienda',img:'https://images.unsplash.com/photo-1600803907087-f56d462fd26b?w=700&q=80',desc:'La burrata llega fresca dos veces por semana desde Puglia, Italia. Se sirve a temperatura ambiente para revelar su interior cremoso, acompañada de prosciutto di Parma curado 24 meses y nuestra rúcula silvestre del huerto.',price:'$2.900'},
+  carpaccio:{name:'Carpaccio di Manzo',sub:'Antipasto · Clásico Veneziano',img:'https://images.unsplash.com/photo-1544025162-d76694265947?w=700&q=80',desc:'El lomo seleccionado se madura 21 días en seco antes de ser laminado al momento. Cada porción lleva parmesano reggiano de 30 meses, alcaparras de Sicilia, rúcula y un toque de limón de Amalfi.',price:'$3.200'},
+  cacio:{name:'Cacio e Pepe',sub:'Primo Piatto · Nuestra firma',img:'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=700&q=80',desc:'Tres ingredientes, una perfección. Nuestro tonnarelli se amasa a mano cada mañana con sémola de trigo duro y yema de huevo. La salsa se prepara al momento con pecorino romano DOP y pimienta de Tellicherry recién molida.',price:'$3.400'},
+  carbonara:{name:'Rigatoni alla Carbonara',sub:'Primo Piatto · Top ventas',img:'https://images.unsplash.com/photo-1546549032-9571cd6b27df?w=700&q=80',desc:'La carbonara auténtica no lleva crema. Solo guanciale de Amatrice dorado en su propia grasa, yemas de huevo de campo batidas con pecorino y parmesano, emulsionadas con el agua de cocción de la pasta.',price:'$3.600'},
+  risotto:{name:'Risotto ai Funghi Porcini',sub:'Primo Piatto · Estacional',img:'https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=700&q=80',desc:'El arroz Carnaroli se tuesta en manteca clarificada y se va hidratando lentamente con caldo de verduras casero. Los porcini secos importados se rehidratan y concentran, mientras que los frescos de temporada aportan textura.',price:'$4.100'},
+  branzino:{name:'Branzino al Forno',sub:'Secondo · Del Adriático',img:'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=700&q=80',desc:'La lubina entera se hornea a 180°C sobre una cama de hierbas mediterráneas — romero, tomillo, orégano — con rodajas de limón de Amalfi, tomates cherry y aceitunas taggiasche de Liguria. Sencillo y extraordinario.',price:'$5.800'},
+  ossobuco:{name:'Ossobuco alla Milanese',sub:'Secondo · El plato de Milano',img:'https://images.unsplash.com/photo-1600891964092-4316c288032e?w=700&q=80',desc:'El jarrete de ternera de primera calidad se estofada durante 4 horas en vino blanco, caldo, tomate y verduras. La gremolata de limón y perejil se agrega al final. Se sirve sobre risotto allo zafferano, el matrimonio perfecto.',price:'$6.200'},
+  tiramisu:{name:'Tiramisù della Nonna',sub:'Dolce · La receta original de 1962',img:'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=700&q=80',desc:'Esta receta es la más preciada herencia de Matteo. La nonna la preparaba para cada cumpleaños familiar desde los años 60. Mascarpone sin batidora, savoiardi empapados con espresso triple y Marsala, cacao de Perú.',price:'$1.600'},
+  pannacotta:{name:'Panna Cotta ai Frutti di Bosco',sub:'Dolce · Cremoso y delicado',img:'https://images.unsplash.com/photo-1488477304112-4944851de03d?w=700&q=80',desc:'La crema se cocina suavemente con vainilla de Madagascar y una proporción precisa de gelatina para lograr esa textura que tiembla al contacto. El coulis de frutos rojos frescos aporta contraste y acidez.',price:'$1.400'},
+};
+
+function openModal(id){
+  const d=dishes[id]; if(!d)return;
+  document.getElementById('modal-img').src=d.img;
+  document.getElementById('modal-name').textContent=d.name;
+  document.getElementById('modal-sub').textContent=d.sub;
+  document.getElementById('modal-desc').textContent=d.desc;
+  document.getElementById('modal-price').textContent=d.price;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(e){ if(e.target.id==='modal-overlay') document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalBtn(){ document.getElementById('modal-overlay').classList.remove('open'); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.getElementById('modal-overlay').classList.remove('open'); });
+</script>
+</body>
+</html>
